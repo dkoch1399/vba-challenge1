@@ -1,0 +1,53 @@
+Sub stock()
+    Dim ws As Worksheet
+    For Each ws In Worksheets
+    ws.Cells(1, 9).Value = "Ticker"
+    ws.Cells(1, 10).Value = "Yearly Change"
+    ws.Cells(1, 11).Value = "Percent Change"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+    ws.Cells(1, 15).Value = "Ticker"
+    ws.Cells(1, 16).Value = "Value"
+    ws.Cells(2, 14).Value = "Greatest % Increase"
+    ws.Cells(3, 14).Value = "Greatest % Decrease"
+    ws.Cells(4, 14).Value = "Greatest Total Volume"
+    Dim Ticker As String
+    Dim TotalStockVolume As LongLong
+    TotalStockVolume = 0
+    Dim OpeningPrice As Double
+    Dim ClosingPrice As Double
+    Dim YearlyChange As Double
+    Dim PercentChange As Double
+    Dim Summary_Table_Row As Integer
+    Summary_Table_Row = 2
+    Dim lastrow As Long
+    lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+            For i = 2 To lastrow
+                If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+                    Ticker = ws.Cells(i, 1).Value
+                    ClosingPrice = ws.Cells(i, 6).Value
+                    YearlyChange = ClosingPrice - OpeningPrice
+                    PercentChange = YearlyChange / OpeningPrice
+                    TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value
+                    ws.Range("I" & Summary_Table_Row) = Ticker
+                    ws.Range("J" & Summary_Table_Row) = YearlyChange
+                    ws.Range("K" & Summary_Table_Row) = Format(PercentChange, "Percent")
+                    ws.Range("L" & Summary_Table_Row) = TotalStockVolume
+                    TotalStockVolume = 0
+                    Summary_Table_Row = Summary_Table_Row + 1
+                Else
+                    TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value
+                End If
+                If ws.Cells(i - 1, 1).Value <> ws.Cells(i, 1).Value Then
+                    OpeningPrice = ws.Cells(i, 3).Value
+                End If
+            Next i
+            For j = 2 To lastrow
+                If ws.Cells(j, 10) < 0 Then
+                    ws.Cells(j, 10).Interior.ColorIndex = 3
+                Else
+                    ws.Cells(j, 10).Interior.ColorIndex = 4
+                End If
+            Next j
+    Next ws
+End Sub
+
